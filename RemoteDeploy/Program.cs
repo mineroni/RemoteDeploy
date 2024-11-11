@@ -27,9 +27,13 @@ internal class Program
             foreach (string file in extensionsToDelete)
                 removeCommand += $" debug/{project}{file}";
 
+        Console.WriteLine("Removing previous build artifacts");
+
         // Removing previous files
         var proc = Process.Start("cmd.exe", $"/c \"ssh root@192.168.3.6 {removeCommand}\"");
         proc.WaitForExit();
+
+        Console.WriteLine("Deploying new files");
 
         // Publishing new files
         foreach (string project in projects)
