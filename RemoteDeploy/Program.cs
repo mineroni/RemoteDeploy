@@ -37,10 +37,18 @@ internal class Program
 
         // Publishing new files
         foreach (string project in projects)
+        {
             foreach (string file in extensionsToDelete)
-                Process.Start("cmd.exe", $"/c \"scp {project}\\bin\\Debug\\net8.0\\linux-arm64\\publish\\{project}{file} root@192.168.3.6:debug)\"");
+            {
+                Console.WriteLine($"/c \"scp {project}\\bin\\Debug\\net8.0\\linux-arm64\\publish\\{project}{file} root@192.168.3.6:debug\"");
+                Process.Start("cmd.exe", $"/c \"scp {project}\\bin\\Debug\\net8.0\\linux-arm64\\publish\\{project}{file} root@192.168.3.6:debug\"").WaitForExit();
+            }
+        }
 
         // Adding execution permission to the startup file
-        proc = Process.Start("cmd.exe", $"/c \"ssh root@192.168.3.6 chmod +x debug/{mainProjectName}\"");
+        proc = Process.Start("cmd.exe", $"/c ssh root@192.168.3.6 \"chmod +x debug/{mainProjectName} && pkill -f {mainProjectName} && dropbear -r /etc/dropbear/dropbear_ecdsa_host_key -p 2222\"");
+
+        proc.WaitForExit();
+
     }
 }
